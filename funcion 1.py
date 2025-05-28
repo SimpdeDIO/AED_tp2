@@ -1,3 +1,10 @@
+def operacioes_validas(monto_final):
+    c1 = suma_monto_final = 0
+    c1 += 1
+    suma_monto_finales += monto_final
+    return c1, suma_monto_final
+
+
 def extraer_datos_linea(linea):
     nombre = linea[0:20]
     codigo_id = linea[20:30]
