@@ -79,14 +79,7 @@ def extraer_datos_linea(linea):
     alg_comision   = linea[50:52]
     alg_impuesto   = linea[52:54]
     
-    return {
-        'nombre': nombre,
-        'codigo_id': codigo_id,
-        'codigo_orden': codigo_orden,
-        'monto_nominal': monto_nominal,
-        'alg_comision': alg_comision,
-        'alg_impuesto': alg_impuesto
-    }
+    return nombre, codigo_id, codigo_orden, monto_nominal, alg_comision, alg_impuesto
 
     
 #Leer archivo y aclarar las tuplas
