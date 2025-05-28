@@ -69,6 +69,25 @@ def calcular_monto_final(codigo_iso, monto_nominal):
         return monto_final
     else:
         return 0
+#Codigo para extraer los datos de cada linea dependiendo la cantidad de caracteres
+#Media hora pensando y todo por que no me pare devueklta a leer el archivo pdf frl tp (Ulises)
+def extraer_datos_linea(linea):
+    nombre         = linea[0:20]
+    codigo_id      = linea[20:30]
+    codigo_orden   = linea[30:40]
+    monto_nominal  = linea[40:50]
+    alg_comision   = linea[50:52]
+    alg_impuesto   = linea[52:54]
+    
+    return {
+        'nombre': nombre,
+        'codigo_id': codigo_id,
+        'codigo_orden': codigo_orden,
+        'monto_nominal': monto_nominal,
+        'alg_comision': alg_comision,
+        'alg_impuesto': alg_impuesto
+    }
+
     
 #Leer archivo y aclarar las tuplas
 archivo = open('archivo.txt', 'r')
