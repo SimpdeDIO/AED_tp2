@@ -1,59 +1,40 @@
+#Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
 def calcular_monto_final(codigo_iso, monto_nominal):
-    # Inicializar variables
     mensaje = ""
     monto_base = 0
     monto_final = 0
     
-    if codigo_iso == codigo_identificacion[0]:  # ARS
-        mensaje = "Moneda valida"
-        comision = round((monto_nominal * 5) / 100, 2)
-        monto_base = monto_nominal - comision
+    # no sabia si tenia que repetir la tupla asi que la deje
+    monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
+    tasas = (5, 7, 7, 9, 0)  # JPY tiene variables especiales con valores no enteros asi que no lo inclui aca
 
-    elif codigo_iso == codigo_identificacion[1]:  # USD
-        mensaje = "Moneda valida"
-        comision = round((monto_nominal * 7) / 100, 2)
-        monto_base = monto_nominal - comision
+    # Procesar las primeras 4 monedas (no JPY)
+    for i in range(4):  # Las primeras 4 monedas tienen procesamiento simple
+        if codigo_iso == monedas[i]:
+            mensaje = "Moneda valida"
+            comision = round((monto_nominal * tasas[i]) / 100, 2) #NOTA 2: che el 2 ese que esta en cada comision pora que era, seguro que hiba¿? (Ulises)
+            monto_base = monto_nominal - comision
+            break
 
-    elif codigo_iso == codigo_identificacion[2]:  # EUR
-        mensaje = "Moneda valida"
-        comision = round((monto_nominal * 7) / 100, 2)
-        monto_base = monto_nominal - comision
-
-    elif codigo_iso == codigo_identificacion[3]:  # GBP
-        mensaje = "Moneda valida"
-        comision = round((monto_nominal * 9) / 100, 2)
-        monto_base = monto_nominal - comision
-
-    elif codigo_iso == codigo_identificacion[4]:  # JPY
+    # Caso especial para JPY (índice 4 en la tupla)
+    if codigo_iso == monedas[4]:
         if monto_nominal >= 15000:
-            if monto_nominal <= 500000:
-                mensaje = "Moneda valida"
-                comision = round((monto_nominal * 9) / 100, 2)
-                if comision > 950000:
-                    comision = 950000
-                monto_base = monto_nominal - comision
-            elif monto_nominal <= 1500000:
-                mensaje = "Moneda valida"
-                comision = round((monto_nominal * 7.8) / 100, 2)
-                if comision > 950000:
-                    comision = 950000
-                monto_base = monto_nominal - comision
-            elif monto_nominal <= 10000000:
-                mensaje = "Moneda valida"
-                comision = round((monto_nominal * 5.5) / 100, 2)
-                if comision > 950000:
-                    comision = 950000
-                monto_base = monto_nominal - comision
-            else:
-                mensaje = "Moneda valida"
-                comision = round((monto_nominal * 5) / 100, 2)
-                if comision > 950000:
-                    comision = 950000
-                monto_base = monto_nominal - comision
+            mensaje = "Moneda valida"
+            # Usar un for para determinar la tasa según el monto
+            rangos_monto = (500000, 1500000, 10000000, float('inf'))
+            tasas_jpy = (9, 7.8, 5.5, 5)
+
+            for j in range(len(rangos_monto)):
+                if monto_nominal <= rangos_monto[j]:
+                    comision = round((monto_nominal * tasas_jpy[j]) / 100, 2)
+                    if comision > 950000:
+                        comision = 950000
+                    monto_base = monto_nominal - comision
+                    break
         else:
             mensaje = "Monto minimo para JPY no alcanzado"
             monto_base = 0
-    else:
+    elif mensaje == "":  # Si no se encontró ninguna moneda válida
         mensaje = "Moneda no autorizada"
         monto_base = 0
 
@@ -69,10 +50,10 @@ def calcular_monto_final(codigo_iso, monto_nominal):
     else:
         return 0
 
-def operacioes_validas(monto_final):
+def operaciones_validas(monto_final):
     c1 = suma_monto_final = 0
     c1 += 1
-    suma_monto_finales += monto_final
+    suma_monto_final += round(monto_final, 2) #Agrege el redondeo a la suma
     return c1, suma_monto_final
 
 
