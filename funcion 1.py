@@ -86,6 +86,23 @@ def extraer_datos_linea(linea):
 
     return nombre, codigo_id, codigo_orden, monto_nominal, alg_comision, alg_impuesto
 
+
+def es_destinatario(codigo_id):
+    valides = None
+    letras_encontradas = 0
+    for car in codigo_id:
+        if car != "-" or letras_encontradas != 0:
+            letras_encontradas = 1
+            if "A" <= car <= "Z" or "0" <= car <= "9" or car == "-":
+                valides = True
+
+            else:
+                valides = False
+        else:
+            valides = False
+
+    return valides
+
 def es_moneda(codigo):
     existe = None
     monedas_encontradas = 0
