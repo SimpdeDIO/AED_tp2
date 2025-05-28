@@ -123,6 +123,26 @@ def es_moneda(codigo):
     else:
         return True
 
+
+def cantidad_operaciones(valides):
+    ct1 = ct2 = ct3 = ct4 = ct5 = 0
+    if valides == ('ARS' or 'USD' or 'EUR' or 'GBP' or 'JPY'):
+        if valides == 'ARS':
+            ct1 += 1
+        if valides == 'USD':
+            ct2 += 1
+        if valides == 'EUR':
+            ct3 += 1
+        if valides == 'GBP':
+            ct4 += 1
+        if valides == 'JPY':
+            ct5 += 1
+        print('moneda valida')
+        return
+    else:
+        print('moneda invalida')
+
+
 def principal():
 
     linea_1 = True
