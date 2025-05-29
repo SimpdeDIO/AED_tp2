@@ -69,18 +69,29 @@ def extraer_datos_linea(linea):
 
 
 def es_destinatario(codigo_id):
-    valides = None
-    letras_encontradas = 0
-    for car in codigo_id:
-        if car != "-" or letras_encontradas != 0:
-            letras_encontradas = 1
-            if "A" <= car <= "Z" or "0" <= car <= "9" or car == "-":
-                valides = True
+     valides = False
+    letras = 0
+    guiones = 0
 
-            else:
-                valides = False
+    for car in codigo_id:
+        if car == " ":
+            continue
+
+        letras += 1
+
+        if "A" <= car <= "Z" or "0" <= car <= "9":
+            valides = True
+            continue
+
+        if car == "-":
+            guiones += 1
+            continue
+
         else:
             valides = False
+            break
+    if guiones == letras:
+        valides = False
 
     return valides
 
@@ -125,22 +136,35 @@ def cantidad_operaciones(valides):
 
 
 def principal():
+    
+    c_monedas_invalidas = 0
+    c_dest_invalidos = 0
 
     linea_1 = True
     archivo = open("ordenes25.txt", "r")
     for linea in archivo:
-        if linea_1 == True:
+        if linea_1 is True:
             linea_1 = False
             continue
 
         nombre, codigo_id, codigo_iso, monto_nominal, alg_comision, alg_impuesto = extraer_datos_linea(linea)
 
-    if es_moneda(codigo_iso):
-        monto_final = calcular_monto_final()
-        operaciones_validas(monto_final)
+#me parece que hay una forma de simplifcar esto pero ya estoy muy quemado chicos im going insane
+
+        if not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
+
+            c_monedas_invalidas = contar(c_monedas_invalidas)
+
+        elif not es_moneda(codigo_iso):
+            c_monedas_invalidas = contar(c_monedas_invalidas)
+
+        if not es_destinatario(codigo_id):
+            c_dest_invalidos = contar(c_dest_invalidos)
 
     archivo.close()
 
+    print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
+    print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
 
 
 principal()
