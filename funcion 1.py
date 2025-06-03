@@ -153,22 +153,24 @@ def principal():
 
         nombre, codigo_id, codigo_iso, monto_nominal, alg_comision, alg_impuesto = extraer_datos_linea(linea)
 
-#me parece que hay una forma de simplifcar esto pero ya estoy muy quemado chicos im going insane
-
-        if not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
-
+        # act 1 y2
+        if es_moneda(codigo_iso) and es_destinatario(codigo_id):
+            c_operaciones_validas = contar(c_operaciones_validas)
+            
+        elif not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
             c_monedas_invalidas = contar(c_monedas_invalidas)
 
         elif not es_moneda(codigo_iso):
             c_monedas_invalidas = contar(c_monedas_invalidas)
 
-        if not es_destinatario(codigo_id):
+        elif not es_destinatario(codigo_id):
             c_dest_invalidos = contar(c_dest_invalidos)
 
     archivo.close()
 
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
+    print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
 
 
 principal()
