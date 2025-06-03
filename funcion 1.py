@@ -140,7 +140,7 @@ def contar(c):
 
 
 def principal():
-    
+    c_operaciones_validas = 0
     c_monedas_invalidas = 0
     c_dest_invalidos = 0
 
