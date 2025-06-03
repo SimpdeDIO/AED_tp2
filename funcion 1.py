@@ -69,7 +69,7 @@ def extraer_datos_linea(linea):
 
 
 def es_destinatario(codigo_id):
-     valides = False
+    valides = False
     letras = 0
     guiones = 0
 
@@ -133,6 +133,10 @@ def cantidad_operaciones(valides):
         return
     else:
         print('moneda invalida')
+
+
+def contar(c):
+    return c + 1
 
 
 def principal():
