@@ -1,42 +1,74 @@
 #Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
-def calcular_monto_base(monto_nominal, comision):
-    monto_base = monto_nominal - comision
 
+def calcular_monto_base(monto_nominal, alg_comision):
+
+    comision = calcular_comision(alg_comision, monto_nominal)
+    monto_base = monto_nominal - comision
     return monto_base
 
+def calcular_monto_final(monto_base, alg_impuesto):
+    impuesto = calcular_impuesto(monto_base, alg_impuesto)
+    monto_final = monto_base - impuesto
 
-def comision(codigo_iso, monto_nominal):
-    monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
+    return monto_final
+
+
+def calcular_impuesto(monto_base, codigo):
+    impuesto = 0
+    if codigo == 1:
+        if monto_base <= 300000:
+            impuesto = 0
+        elif monto_base > 300000:
+            excedente = monto_base - 300000
+            impuesto = (25 / 100) * excedente
+
+    elif codigo == 2:
+        if monto_base < 50000:
+            impuesto = 50
+        elif monto_base >= 50000:
+            impuesto = 100
+
+    elif codigo == 3:
+        impuesto = (3/100) * monto_base
+
+    return impuesto
+
+def calcular_comision(codigo, monto_nominal):
     comision = 0
 
-    if codigo_iso == monedas[0]:
-        comision = (9 / 100) * monto_nominal
+    if codigo == 1:
+        comision = (9/100) * monto_nominal
 
-    elif codigo_iso == monedas[1]:
+    elif codigo == 2:
         if monto_nominal < 50000:
             comision = 0
+        elif 50000 <= monto_nominal <= 80000:
+            comision = (5/100) * monto_nominal
+        elif monto_nominal > 80000:
+            comision = (7.8/100) * monto_nominal
 
-        elif 50000 <= monto_nominal < 80000:
-            comision = (5 / 100) * monto_nominal
-
-        elif monto_nominal >= 80000:
-            comision = (7.8 / 100) * monto_nominal
-
-    elif codigo_iso == monedas[2] or codigo_iso == monedas[3]:
+    elif codigo == 3:
         monto_fijo = 100
         if monto_nominal > 25000:
             comision = (6/100) * monto_nominal
             comision += monto_fijo
-
         else:
             comision = monto_fijo
 
-    elif codigo_iso == monedas[4]:
+    elif codigo == 4:
         if monto_nominal <= 100000:
             comision = 500
-
         elif monto_nominal > 100000:
             comision = 1000
+
+    elif codigo == 5:
+        if monto_nominal < 500000:
+            comision = 0
+        elif monto_nominal >= 500000:
+            comision = (7/100) * monto_nominal
+
+        if comision > 50000:
+            comision = 50000
 
     return comision
 
@@ -49,6 +81,7 @@ def extraer_datos_linea(linea):
     monto_nominal = int(linea[40:50])
     alg_comision = int(linea[50:52])
     alg_impuesto = int(linea[52:54])
+    return nombre, codigo_id, codigo_orden, monto_nominal, alg_comision, alg_impuesto
 
 def es_destinatario(codigo_id):
     valides = False
@@ -138,8 +171,9 @@ def principal():
         # act 1 y2
         if es_moneda(codigo_iso) and es_destinatario(codigo_id):
             c_operaciones_validas = contar(c_operaciones_validas)
-            comision = comision(codigo_iso, monto_nominal)
-            calcular_monto_base(monto_nominal, comision)
+            monto_base = calcular_monto_base(monto_nominal, alg_comision)
+            monto_final = calcular_monto_final(monto_base, alg_impuesto)
+            suma_montos += monto_final
             
         elif not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
             c_monedas_invalidas = contar(c_monedas_invalidas)
@@ -155,6 +189,7 @@ def principal():
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
     print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
+    print(' (r4) - Suma de montos finales de operaciones validas:', suma_montos)
 
 
 principal()
