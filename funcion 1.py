@@ -1,72 +1,48 @@
 #Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
-def calcular_monto_final(codigo_iso, monto_nominal):
-    mensaje = ""
+def calcular_monto_base(codigo_iso, monto_nominal):
     monto_base = 0
-    monto_final = 0
-    
-    # no sabia si tenia que repetir la tupla asi que la deje
+    comision = comision()
+
     monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
     tasas = (5, 7, 7, 9, 0)  # JPY tiene variables especiales con valores no enteros asi que no lo inclui aca
 
-    # Procesar las primeras 4 monedas (no JPY)
-    for i in range(4):  # Las primeras 4 monedas tienen procesamiento simple
-        if codigo_iso == monedas[i]:
-            mensaje = "Moneda valida"
-            comision = round((monto_nominal * tasas[i]) / 100, 2) #NOTA 2: che el 2 ese que esta en cada comision pora que era, seguro que hiba¿? (Ulises)
-            monto_base = monto_nominal - comision
-            break
+    monto_base = monto_nominal
 
-    # Caso especial para JPY (índice 4 en la tupla)
-    if codigo_iso == monedas[4]:
-        if monto_nominal >= 15000:
-            mensaje = "Moneda valida"
-            # Usar un for para determinar la tasa según el monto
-            rangos_monto = (500000, 1500000, 10000000, float('inf'))
-            tasas_jpy = (9, 7.8, 5.5, 5)
 
-            for j in range(len(rangos_monto)):
-                if monto_nominal <= rangos_monto[j]:
-                    comision = round((monto_nominal * tasas_jpy[j]) / 100, 2)
-                    if comision > 950000:
-                        comision = 950000
-                    monto_base = monto_nominal - comision
-                    break
-        else:
-            mensaje = "Monto minimo para JPY no alcanzado"
-            monto_base = 0
-    elif mensaje == "":  # Si no se encontró ninguna moneda válida
-        mensaje = "Moneda no autorizada"
-        monto_base = 0
+def comision(codigo_iso, monto_nominal):
+    comision = 0
+    monto_fijo = 0
 
-    if monto_base > 500000:
-        impuesto = (monto_base * 21) / 100
-        monto_final = monto_base - impuesto
-    else:
-        monto_final = monto_base
-    
-    # Retornar monto_final solo si moneda es válida y monto_base > 0
-    if mensaje == "Moneda valida" and monto_base > 0:
-        return monto_final
-    else:
-        return 0
+    monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
+    if codigo_iso == monedas[0]:
+        comision = (9 / 100) * monto_nominal
 
-def operaciones_validas(monto_final):
-    c1 = suma_monto_final = 0
-    c1 += 1
-    suma_monto_final += round(monto_final, 2) #Agrege el redondeo a la suma
-    return c1, suma_monto_final
+    elif codigo_iso == monedas[1]:
+        if monto_nominal < 50000:
+            comision = 0
+
+        elif 50000 <= monto_nominal < 80000:
+            comision = (5 / 100) * monto_nominal
+
+        elif monto_nominal >= 80000:
+            comision = (7.8 / 100) * monto_nominal
+
+    elif codigo_iso == monedas[2] or codigo_iso == monedas[3] :
+        monto_fijo = 100
+        if monto_nominal > 25000:
+            pass
+
+    elif codigo_iso == monedas[3]:
+        comision = 9 / 100
 
 
 def extraer_datos_linea(linea):
     nombre = linea[0:20]
     codigo_id = linea[20:30]
     codigo_orden = linea[30:40]
-    monto_nominal = linea[40:50]
-    alg_comision = linea[50:52]
-    alg_impuesto = linea[52:54]
-
-    return nombre, codigo_id, codigo_orden, monto_nominal, alg_comision, alg_impuesto
-
+    monto_nominal = int(linea[40:50])
+    alg_comision = int(linea[50:52])
+    alg_impuesto = int(linea[52:54])
 
 def es_destinatario(codigo_id):
     valides = False
