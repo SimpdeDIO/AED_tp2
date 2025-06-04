@@ -1,0 +1,195 @@
+# Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
+def calcular_monto_final(codigo_iso, monto_nominal):
+    mensaje = ""
+    monto_base = 0
+    monto_final = 0
+
+    # no sabia si tenia que repetir la tupla asi que la deje
+    monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
+    tasas = (5, 7, 7, 9, 0)  # JPY tiene variables especiales con valores no enteros asi que no lo inclui aca
+
+    # Procesar las primeras 4 monedas (no JPY)
+    for i in range(4):  # Las primeras 4 monedas tienen procesamiento simple
+        if codigo_iso == monedas[i]:
+            mensaje = "Moneda valida"
+            comision = round((monto_nominal * tasas[i]) / 100,
+                             2)  # NOTA 2: che el 2 ese que esta en cada comision pora que era, seguro que hiba¿? (Ulises)
+            monto_base = monto_nominal - comision
+            break
+
+    # Caso especial para JPY (índice 4 en la tupla)
+    if codigo_iso == monedas[4]:
+        if monto_nominal >= 15000:
+            mensaje = "Moneda valida"
+            # Usar un for para determinar la tasa según el monto
+            rangos_monto = (500000, 1500000, 10000000, float('inf'))
+            tasas_jpy = (9, 7.8, 5.5, 5)
+
+            for j in range(len(rangos_monto)):
+                if monto_nominal <= rangos_monto[j]:
+                    comision = round((monto_nominal * tasas_jpy[j]) / 100, 2)
+                    if comision > 950000:
+                        comision = 950000
+                    monto_base = monto_nominal - comision
+                    break
+        else:
+            mensaje = "Monto minimo para JPY no alcanzado"
+            monto_base = 0
+    elif mensaje == "":  # Si no se encontró ninguna moneda válida
+        mensaje = "Moneda no autorizada"
+        monto_base = 0
+
+    if monto_base > 500000:
+        impuesto = (monto_base * 21) / 100
+        monto_final = monto_base - impuesto
+    else:
+        monto_final = monto_base
+
+    # Retornar monto_final solo si moneda es válida y monto_base > 0
+    if mensaje == "Moneda valida" and monto_base > 0:
+        return monto_final
+    else:
+        return 0
+
+#act 2(r3,r4)
+def operaciones_validas(monto_final):
+    c1 = suma_monto_final = 0
+    c1 += 1
+    suma_monto_final += round(monto_final, 2)
+    return c1, suma_monto_final
+
+
+#act 1(r1,r2)
+def es_destinatario(codigo_id):
+    valides = False
+    letras = 0
+    guiones = 0
+
+    for car in codigo_id:
+        if car == " ":
+            continue
+
+        letras += 1
+
+        if "A" <= car <= "Z" or "0" <= car <= "9":
+            valides = True
+            continue
+
+        if car == "-":
+            guiones += 1
+            continue
+
+        else:
+            valides = False
+            break
+    if guiones == letras:
+        valides = False
+
+    return valides
+
+#act 1(r1,r2)
+def es_moneda(codigo):
+    existe = None
+    monedas_encontradas = 0
+
+    codigo_iso = ("ARS", "USD", "EUR", "GBP", "JPY")
+    for moneda in codigo_iso:
+        if moneda in codigo:
+            if existe is None:
+                existe = moneda
+                monedas_encontradas = 1
+
+            elif existe != moneda:
+                monedas_encontradas += 1
+
+    if monedas_encontradas != 1:
+        return False
+
+    else:
+        return True
+
+#act 3(r5,r9)
+def obtener_moneda(codigo):
+    for moneda in ["ARS", "USD", "EUR", "GBP", "JPY"]:
+        if moneda in codigo:
+            return moneda
+    return None
+
+#contador act 1(r1,r2)
+def contar(c):
+    return c + 1
+
+#funcion principal
+
+def principal():
+    c_operaciones_validas = 0
+    c_monedas_invalidas = 0
+    c_dest_invalidos = 0
+    suma_mf_validas = 0
+    cant_operaciones_validas = 0
+    cant_ARS = 0
+    cant_USD = 0
+    cant_EUR = 0
+    cant_GBP = 0
+    cant_JPY = 0
+    moneda = 0
+
+
+    archivo = open("ordenes.txt", "r")
+    lineas = archivo.readlines()
+
+
+    for i in range(1, len(lineas)):
+        linea = lineas[i].rstrip("\n")
+        nombre = linea[0:20].strip()
+        identificador = linea[20:30].strip()
+        codigo_orden = linea[30:40].strip()
+        monto_nominal = int(linea[40:50].strip())
+        algoritmo_comision = int(linea[50:52].strip())
+        algoritmo_impuesto = int(linea[52:54].strip())
+
+        linea, nombre, identificador, codigo_orden, monto_nominal, algoritmo_comision, algoritmo_impuesto
+
+        # act 1 y 2
+        if es_moneda(codigo_orden) and es_destinatario(identificador):
+            c_operaciones_validas = contar(c_operaciones_validas)
+
+        elif not es_moneda(codigo_orden) and not es_destinatario(identificador):
+            c_monedas_invalidas = contar(c_monedas_invalidas)
+
+        elif not es_moneda(codigo_orden):
+            c_monedas_invalidas = contar(c_monedas_invalidas)
+
+        elif not es_destinatario(identificador):
+            c_dest_invalidos = contar(c_dest_invalidos)
+
+        # act 2(r4)
+        monto_final = calcular_monto_final(codigo_orden, monto_nominal)
+        suma_mf_validas += monto_final
+
+        # act 3(r5,r9)
+        moneda = obtener_moneda(codigo_orden)
+        if moneda == "ARS":
+            cant_ARS += 1
+        elif moneda == "USD":
+            cant_USD += 1
+        elif moneda == "EUR":
+            cant_EUR += 1
+        elif moneda == "GBP":
+            cant_GBP += 1
+        elif moneda == "JPY":
+            cant_JPY += 1
+
+
+    archivo.close()
+
+    print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
+    print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
+    print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
+    print(' (r4) - Suma de montos finales de operaciones validas:', suma_mf_validas)
+    print(' (r5) - Cantidad de ordenes para moneda ARS:', cant_ARS)
+    print(' (r6) - Cantidad de ordenes para moneda USD:', cant_USD)
+    print(' (r7) - Cantidad de ordenes para moneda EUR:', cant_EUR)
+    print(' (r8) - Cantidad de ordenes para moneda GBP:', cant_GBP)
+    print(' (r9) - Cantidad de ordenes para moneda JPN:', cant_JPY)
+principal()
