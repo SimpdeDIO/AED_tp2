@@ -1,19 +1,14 @@
 #Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
-def calcular_monto_base(codigo_iso, monto_nominal):
-    monto_base = 0
-    comision = comision()
+def calcular_monto_base(monto_nominal, comision):
+    monto_base = monto_nominal - comision
 
-    monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
-    tasas = (5, 7, 7, 9, 0)  # JPY tiene variables especiales con valores no enteros asi que no lo inclui aca
-
-    monto_base = monto_nominal
+    return monto_base
 
 
 def comision(codigo_iso, monto_nominal):
-    comision = 0
-    monto_fijo = 0
-
     monedas = ("ARS", "USD", "EUR", "GBP", "JPY")
+    comision = 0
+
     if codigo_iso == monedas[0]:
         comision = (9 / 100) * monto_nominal
 
@@ -27,13 +22,24 @@ def comision(codigo_iso, monto_nominal):
         elif monto_nominal >= 80000:
             comision = (7.8 / 100) * monto_nominal
 
-    elif codigo_iso == monedas[2] or codigo_iso == monedas[3] :
+    elif codigo_iso == monedas[2] or codigo_iso == monedas[3]:
         monto_fijo = 100
         if monto_nominal > 25000:
-            pass
+            comision = (6/100) * monto_nominal
+            comision += monto_fijo
 
-    elif codigo_iso == monedas[3]:
-        comision = 9 / 100
+        else:
+            comision = monto_fijo
+
+    elif codigo_iso == monedas[4]:
+        if monto_nominal <= 100000:
+            comision = 500
+
+        elif monto_nominal > 100000:
+            comision = 1000
+
+    return comision
+
 
 
 def extraer_datos_linea(linea):
@@ -132,6 +138,8 @@ def principal():
         # act 1 y2
         if es_moneda(codigo_iso) and es_destinatario(codigo_id):
             c_operaciones_validas = contar(c_operaciones_validas)
+            comision = comision(codigo_iso, monto_nominal)
+            calcular_monto_base(monto_nominal, comision)
             
         elif not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
             c_monedas_invalidas = contar(c_monedas_invalidas)
