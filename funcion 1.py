@@ -158,6 +158,7 @@ def principal():
     c_operaciones_validas = 0
     c_monedas_invalidas = 0
     c_dest_invalidos = 0
+    suma_montos = 0
 
     linea_1 = True
     archivo = open("ordenes25.txt", "r")
