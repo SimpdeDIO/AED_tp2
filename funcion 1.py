@@ -3,7 +3,8 @@ def actu_bene_prim_oper(nombre_actual, nombre_primera_operacion, cantidad_aparic
     if nombre_primera_operacion is None:
         nombre_primera_operacion = nombre_actual
     if nombre_actual == nombre_primera_operacion:
-        cantidad_apariciones_beneficiario += 1
+        cantidad_apariciones_beneficiario += 1 #Capaz aca se pueda usar el def de contador que hizo nico pero no supe integrarlo sin que me tirara error
+        #Asi que lo deje asi
     return nombre_primera_operacion, cantidad_apariciones_beneficiario #Funcion de Actividad 5
 
 
