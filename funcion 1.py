@@ -1,10 +1,17 @@
-#Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
+# Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
+def actu_bene_prim_oper(nombre_actual, nombre_primera_operacion, cantidad_apariciones_beneficiario):
+    if nombre_primera_operacion is None:
+        nombre_primera_operacion = nombre_actual
+    if nombre_actual == nombre_primera_operacion:
+        cantidad_apariciones_beneficiario += 1
+    return nombre_primera_operacion, cantidad_apariciones_beneficiario #Funcion de Actividad 5
+
 
 def calcular_monto_base(monto_nominal, alg_comision):
-
     comision = calcular_comision(alg_comision, monto_nominal)
     monto_base = monto_nominal - comision
     return monto_base
+
 
 def calcular_monto_final(monto_base, alg_impuesto):
     impuesto = calcular_impuesto(monto_base, alg_impuesto)
@@ -29,28 +36,29 @@ def calcular_impuesto(monto_base, codigo):
             impuesto = 100
 
     elif codigo == 3:
-        impuesto = (3/100) * monto_base
+        impuesto = (3 / 100) * monto_base
 
     return impuesto
+
 
 def calcular_comision(codigo, monto_nominal):
     comision = 0
 
     if codigo == 1:
-        comision = (9/100) * monto_nominal
+        comision = (9 / 100) * monto_nominal
 
     elif codigo == 2:
         if monto_nominal < 50000:
             comision = 0
         elif 50000 <= monto_nominal <= 80000:
-            comision = (5/100) * monto_nominal
+            comision = (5 / 100) * monto_nominal
         elif monto_nominal > 80000:
-            comision = (7.8/100) * monto_nominal
+            comision = (7.8 / 100) * monto_nominal
 
     elif codigo == 3:
         monto_fijo = 100
         if monto_nominal > 25000:
-            comision = (6/100) * monto_nominal
+            comision = (6 / 100) * monto_nominal
             comision += monto_fijo
         else:
             comision = monto_fijo
@@ -65,13 +73,12 @@ def calcular_comision(codigo, monto_nominal):
         if monto_nominal < 500000:
             comision = 0
         elif monto_nominal >= 500000:
-            comision = (7/100) * monto_nominal
+            comision = (7 / 100) * monto_nominal
 
         if comision > 50000:
             comision = 50000
 
     return comision
-
 
 
 def extraer_datos_linea(linea):
@@ -82,6 +89,7 @@ def extraer_datos_linea(linea):
     alg_comision = int(linea[50:52])
     alg_impuesto = int(linea[52:54])
     return nombre, codigo_id, codigo_orden, monto_nominal, alg_comision, alg_impuesto
+
 
 def es_destinatario(codigo_id):
     valides = False
@@ -109,6 +117,7 @@ def es_destinatario(codigo_id):
         valides = False
 
     return valides
+
 
 def es_moneda(codigo):
     existe = None
@@ -160,6 +169,11 @@ def principal():
     c_dest_invalidos = 0
     suma_montos = 0
 
+
+    #Actividad 5
+    nombre_primera_operacion = None
+    cantidad_apariciones_beneficiario = 0
+
     linea_1 = True
     archivo = open("ordenes25.txt", "r")
     for linea in archivo:
@@ -175,7 +189,7 @@ def principal():
             monto_base = calcular_monto_base(monto_nominal, alg_comision)
             monto_final = calcular_monto_final(monto_base, alg_impuesto)
             suma_montos += monto_final
-            
+
         elif not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
             c_monedas_invalidas = contar(c_monedas_invalidas)
 
@@ -185,12 +199,17 @@ def principal():
         elif not es_destinatario(codigo_id):
             c_dest_invalidos = contar(c_dest_invalidos)
 
+        #Actividad 5:
+        nombre_primera_operacion, cantidad_apariciones_beneficiario = actu_bene_prim_oper(nombre, nombre_primera_operacion, cantidad_apariciones_beneficiario)
+
     archivo.close()
 
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
     print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
     print(' (r4) - Suma de montos finales de operaciones validas:', suma_montos)
+    print(" (r13) - Nombre del primer beneficiario:", nombre_primera_operacion)
+    print(" (r14) - Cantidad de veces que aparece:", cantidad_apariciones_beneficiario)
 
 
 principal()
