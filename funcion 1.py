@@ -1,10 +1,9 @@
-# Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequerar piola
+# Trate de meter todos los if en un for pero nose si esta bien, si lo pueden chequear piola
 def actu_bene_prim_oper(nombre_actual, nombre_primera_operacion, cantidad_apariciones_beneficiario):
     if nombre_primera_operacion is None:
         nombre_primera_operacion = nombre_actual
     if nombre_actual == nombre_primera_operacion:
-        cantidad_apariciones_beneficiario += 1 #Capaz aca se pueda usar el def de contador que hizo nico pero no supe integrarlo sin que me tirara error
-        #Asi que lo deje asi
+        cantidad_apariciones_beneficiario += 1
     return nombre_primera_operacion, cantidad_apariciones_beneficiario #Funcion de Actividad 5
 
 
@@ -170,10 +169,13 @@ def principal():
     c_dest_invalidos = 0
     suma_montos = 0
 
-
     #Actividad 5
     nombre_primera_operacion = None
     cantidad_apariciones_beneficiario = 0
+
+    #Actividad 6
+    ordenes_totales = 0
+    c_operaciones_invalidas = 0
 
     linea_1 = True
     archivo = open("ordenes25.txt", "r")
@@ -200,10 +202,24 @@ def principal():
         elif not es_destinatario(codigo_id):
             c_dest_invalidos = contar(c_dest_invalidos)
 
+        #Actividad 6
+        #Pensaba sumar c_dest_invalidos y c_monedas_invalidas pero si se repite lo suma mal asique lo deje asi
+        #Valen / Nico si pueden cambiar los += 1 por lo de la funcion contador se los agradesco xd
+        ordenes_totales += 1
+        if not (es_moneda(codigo_iso) and es_destinatario(codigo_id)):
+            c_operaciones_invalidas += 1
+
         #Actividad 5:
         nombre_primera_operacion, cantidad_apariciones_beneficiario = actu_bene_prim_oper(nombre, nombre_primera_operacion, cantidad_apariciones_beneficiario)
 
+
+
     archivo.close()
+    #Actividad 6
+    if ordenes_totales > 0:
+        porcentaje_invalidas = (c_operaciones_invalidas * 100) // ordenes_totales
+    else:
+        porcentaje_invalidas = 0
 
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
@@ -211,6 +227,8 @@ def principal():
     print(' (r4) - Suma de montos finales de operaciones validas:', suma_montos)
     print(" (r13) - Nombre del primer beneficiario:", nombre_primera_operacion)
     print(" (r14) - Cantidad de veces que aparece:", cantidad_apariciones_beneficiario)
+    print(" (r15) - Porcentaje de operaciones inválidas:", porcentaje_invalidas, "%")
+
 
 
 principal()
