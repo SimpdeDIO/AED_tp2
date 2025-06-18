@@ -228,7 +228,7 @@ def principal():
         porcentaje_invalidas = 0
 
     #act 7
-    if c_operaciones_validas > 0:
+    if op_validas_ars > 0:
         monto_promedio = suma_montos_ars // op_validas_ars
     else:
         monto_promedio = 0
