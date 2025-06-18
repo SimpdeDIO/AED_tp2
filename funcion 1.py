@@ -140,23 +140,7 @@ def es_moneda(codigo):
         return True
 
 
-def cantidad_operaciones(valides):
-    ct1 = ct2 = ct3 = ct4 = ct5 = 0
-    if valides == ('ARS' or 'USD' or 'EUR' or 'GBP' or 'JPY'):
-        if valides == 'ARS':
-            ct1 += 1
-        if valides == 'USD':
-            ct2 += 1
-        if valides == 'EUR':
-            ct3 += 1
-        if valides == 'GBP':
-            ct4 += 1
-        if valides == 'JPY':
-            ct5 += 1
-        print('moneda valida')
-        return
-    else:
-        print('moneda invalida')
+
 
 
 def contar(c):
@@ -217,7 +201,19 @@ def principal():
 
         #Actividad 5:
         nombre_primera_operacion, cantidad_apariciones_beneficiario = actu_bene_prim_oper(nombre, nombre_primera_operacion, cantidad_apariciones_beneficiario)
-
+        
+        # act 3(r5,r9)
+        moneda = obtener_moneda(codigo_orden)
+        if moneda == "ARS":
+            cant_ARS += 1
+        elif moneda == "USD":
+            cant_USD += 1
+        elif moneda == "EUR":
+            cant_EUR += 1
+        elif moneda == "GBP":Add commentMore actions
+            cant_GBP += 1
+        elif moneda == "JPY":
+            cant_JPY += 1
 
 
     archivo.close()
