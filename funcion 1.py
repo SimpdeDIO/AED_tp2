@@ -177,6 +177,10 @@ def principal():
     ordenes_totales = 0
     c_operaciones_invalidas = 0
 
+    # act 7
+    suma_montos_ars = 0
+    op_validas_ars = 0
+
     linea_1 = True
     archivo = open("ordenes25.txt", "r")
     for linea in archivo:
@@ -184,6 +188,7 @@ def principal():
             linea_1 = False
             continue
 
+        ordenes_totales += 1 # act 6
         nombre, codigo_id, codigo_iso, monto_nominal, alg_comision, alg_impuesto = extraer_datos_linea(linea)
 
         # act 1 y2
@@ -193,21 +198,22 @@ def principal():
             monto_final = calcular_monto_final(monto_base, alg_impuesto)
             suma_montos += monto_final
 
+            if "ARS" in codigo_iso:
+                suma_montos_ars += monto_final
+                op_validas_ars = contar(op_validas_ars)
+
+
         elif not es_moneda(codigo_iso) and not es_destinatario(codigo_id):
             c_monedas_invalidas = contar(c_monedas_invalidas)
+            c_operaciones_invalidas = contar(c_operaciones_invalidas) # suma oeraciones invalidas act 6
 
         elif not es_moneda(codigo_iso):
             c_monedas_invalidas = contar(c_monedas_invalidas)
+            c_operaciones_invalidas = contar(c_operaciones_invalidas) # suma oeraciones invalidas act 6
 
         elif not es_destinatario(codigo_id):
             c_dest_invalidos = contar(c_dest_invalidos)
-
-        #Actividad 6
-        #Pensaba sumar c_dest_invalidos y c_monedas_invalidas pero si se repite lo suma mal asique lo deje asi
-        #Valen / Nico si pueden cambiar los += 1 por lo de la funcion contador se los agradesco xd
-        ordenes_totales += 1
-        if not (es_moneda(codigo_iso) and es_destinatario(codigo_id)):
-            c_operaciones_invalidas += 1
+            c_operaciones_invalidas = contar(c_operaciones_invalidas) # suma oeraciones invalidas act 6
 
         #Actividad 5:
         nombre_primera_operacion, cantidad_apariciones_beneficiario = actu_bene_prim_oper(nombre, nombre_primera_operacion, cantidad_apariciones_beneficiario)
@@ -221,6 +227,12 @@ def principal():
     else:
         porcentaje_invalidas = 0
 
+    #act 7
+    if c_operaciones_validas > 0:
+        monto_promedio = suma_montos_ars // op_validas_ars
+    else:
+        monto_promedio = 0
+
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
     print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
@@ -228,6 +240,7 @@ def principal():
     print(" (r13) - Nombre del primer beneficiario:", nombre_primera_operacion)
     print(" (r14) - Cantidad de veces que aparece:", cantidad_apariciones_beneficiario)
     print(" (r15) - Porcentaje de operaciones inválidas:", porcentaje_invalidas, "%")
+    print('(r16) - Monto final promedio de las ordenes validas en moneda ARS:', monto_promedio)
 
 
 
