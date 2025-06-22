@@ -173,7 +173,7 @@ def principal():
     cant_GBP = 0
     cant_JPY = 0
     moneda = 0
-    max_diferencia = None
+    max_diferencia = None #Si le pones 0 no arrancaba la funcion
     codigo_orden_max = None
     monto_nominal_max = None
     monto_final_max = None
