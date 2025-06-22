@@ -1,4 +1,4 @@
-# datos a extraer
+# datos
 def extraer_datos_linea(linea):
     nombre = linea[0:20]
     codigo_id = linea[20:30]
@@ -42,7 +42,6 @@ def es_destinatario(codigo_id):
 def es_moneda(codigo):
     existe = None
     monedas_encontradas = 0
-
     codigo_iso = ("ARS", "USD", "EUR", "GBP", "JPY")
     for moneda in codigo_iso:
         if moneda in codigo:
@@ -83,7 +82,6 @@ def calcular_monto_base(monto_nominal, alg_comision):
 def calcular_monto_final(monto_base, alg_impuesto):
     impuesto = calcular_impuesto(monto_base, alg_impuesto)
     monto_final = monto_base - impuesto
-
     return monto_final
 
 
@@ -147,6 +145,15 @@ def calcular_comision(codigo, monto_nominal):
 
     return comision
 
+#el agregado de la actividad 4
+def actualizar_max_diferencia(codigo_orden, monto_nominal, alg_comision, alg_impuesto, max_dif_act, cod_max, nom_max, final_max):
+    monto_base = calcular_monto_base(monto_nominal, alg_comision)
+    monto_final = calcular_monto_final(monto_base, alg_impuesto)
+    diferencia = monto_nominal - monto_final
+    if (max_dif_act is None) or (diferencia > max_dif_act):
+        return diferencia, codigo_orden, monto_nominal, monto_final
+    else:
+        return max_dif_act, cod_max, nom_max, final_max
 
 # act 5 (r13,r14)
 def actu_bene_prim_oper(nombre_actual, nombre_primera_operacion, cantidad_apariciones_beneficiario):
@@ -166,6 +173,10 @@ def principal():
     cant_GBP = 0
     cant_JPY = 0
     moneda = 0
+    max_diferencia = None
+    codigo_orden_max = None
+    monto_nominal_max = None
+    monto_final_max = None
     c_operaciones_validas = 0
     c_monedas_invalidas = 0
     c_dest_invalidos = 0
@@ -179,7 +190,7 @@ def principal():
 
     # salto de primera linea y lectura del archivo
     linea_1 = True
-    archivo = open("ordenes.txt")
+    archivo = open("ordenes25.txt")
     for linea in archivo:
         if linea_1 is True:
             linea_1 = False
@@ -230,6 +241,8 @@ def principal():
         elif moneda == "JPY":
             cant_JPY += 1
 
+        #Actividad 4
+        max_diferencia, codigo_orden_max, monto_nominal_max, monto_final_max = actualizar_max_diferencia(codigo_iso, monto_nominal, alg_comision, alg_impuesto, max_diferencia, codigo_orden_max, monto_nominal_max, monto_final_max)
 
         # Actividad 5:
         nombre_primera_operacion, cantidad_apariciones_beneficiario = actu_bene_prim_oper(nombre, nombre_primera_operacion,cantidad_apariciones_beneficiario)
@@ -248,18 +261,23 @@ def principal():
     else:
         monto_promedio = 0
 
+    # No borren los comentarios che
+    # Total no afectan, los sacamos recien para la entrega noma
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
     print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
-    print(' (r4) - Suma de montos finales de operaciones validas:', suma_montos)
+    print(' (r4) - Suma de montos finales de operaciones validas:', suma_montos) #Este da mal
     print(' (r5) - Cantidad de ordenes para moneda ARS:', cant_ARS)
     print(' (r6) - Cantidad de ordenes para moneda USD:', cant_USD)
     print(' (r7) - Cantidad de ordenes para moneda EUR:', cant_EUR)
     print(' (r8) - Cantidad de ordenes para moneda GBP:', cant_GBP)
     print(' (r9) - Cantidad de ordenes para moneda JPN:', cant_JPY)
-    print(" (r13) - Nombre del primer beneficiario:", nombre_primera_operacion)
-    print(" (r14) - Cantidad de veces que aparece:", cantidad_apariciones_beneficiario)
-    print(" (r15) - Porcentaje de operaciones inválidas:", porcentaje_invalidas, "%")
-    print('(r16) - Monto final promedio de las ordenes validas en moneda ARS:', monto_promedio)
+    print('(r10) - Codigo de la orden de pago con mayor diferencia nominal - final:', codigo_orden_max)
+    print('(r11) - Monto nominal de esa misma orden:', monto_nominal_max)
+    print('(r12) - Monto final de esa misma orden:', monto_final_max) #Este da mal
+    print('(r13) - Nombre del primer beneficiario del archivo', nombre_primera_operacion)
+    print('(r14) - Cantidad de veces que apareció ese mismo nombre:', cantidad_apariciones_beneficiario)
+    print('(r15) - Porcentaje de operaciones inválidas sobre el total:', porcentaje_invalidas)
+    print('(r16) - Monto final promedio de las ordenes validas en moneda ARS:', monto_promedio) #El resultado da bien pero esta demas el .0
 
 principal()
