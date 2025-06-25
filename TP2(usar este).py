@@ -122,9 +122,9 @@ def calcular_comision(codigo, monto_nominal):
     elif codigo == 2:
         if monto_nominal < 50000:
             comision = 0
-        elif 50000 <= monto_nominal <= 80000:
+        elif 50000 <= monto_nominal < 80000:
             comision = (5 / 100) * monto_nominal
-        elif monto_nominal > 80000:
+        elif monto_nominal >= 80000:
             comision = (7.8 / 100) * monto_nominal
 
     elif codigo == 3:
@@ -207,7 +207,7 @@ def principal():
 
     # salto de primera linea y lectura del archivo
     linea_1 = True
-    archivo = open("ordenes25.txt")
+    archivo = open("ordenes.txt")
     for linea in archivo:
         if linea_1 is True:
             linea_1 = False
