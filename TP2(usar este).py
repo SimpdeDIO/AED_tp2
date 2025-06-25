@@ -1,3 +1,4 @@
+
 # datos
 def extraer_datos_linea(linea):
     nombre = linea[0:20]
@@ -87,6 +88,10 @@ def calcular_monto_final(monto_base, alg_impuesto):
 
 def calcular_impuesto(monto_base, codigo):
     impuesto = 0
+
+    if codigo == 4 or codigo == 5:
+        impuesto = 0
+
     if codigo == 1:
         if monto_base <= 300000:
             impuesto = 0
@@ -108,6 +113,8 @@ def calcular_impuesto(monto_base, codigo):
 
 def calcular_comision(codigo, monto_nominal):
     comision = 0
+    if codigo == 6 or codigo == 8:
+        comision = 0
 
     if codigo == 1:
         comision = (9 / 100) * monto_nominal
@@ -142,6 +149,15 @@ def calcular_comision(codigo, monto_nominal):
 
         if comision > 50000:
             comision = 50000
+
+    elif codigo == 7:
+        if monto_nominal <= 75000:
+            comision = 3000
+        elif monto_nominal > 75000:
+            comision = (monto_nominal - 75000) * 0.05
+
+        if comision >= 10000:
+            comision = 10000
 
     return comision
 
@@ -187,6 +203,7 @@ def principal():
     c_operaciones_invalidas = 0
     suma_montos_ars = 0
     op_validas_ars = 0
+    redondeo = 0
 
     # salto de primera linea y lectura del archivo
     linea_1 = True
@@ -208,6 +225,7 @@ def principal():
             monto_base = calcular_monto_base(monto_nominal, alg_comision)
             monto_final = calcular_monto_final(monto_base, alg_impuesto)
             suma_montos += monto_final
+
 
             if "ARS" in codigo_iso:
                 suma_montos_ars += monto_final
@@ -261,12 +279,13 @@ def principal():
     else:
         monto_promedio = 0
 
+
     # No borren los comentarios che
     # Total no afectan, los sacamos recien para la entrega noma
     print(' (r1) - Cantidad de ordenes invalidas - moneda no autorizada:', c_monedas_invalidas)
     print(' (r2) - Cantidad de ordenes invalidas - beneficiario mal identificado:', c_dest_invalidos)
     print(' (r3) - Cantidad de operaciones validas:', c_operaciones_validas)
-    print(' (r4) - Suma de montos finales de operaciones validas:', suma_montos) #Este da mal
+    print(' (r4) - Suma de montos finales de operaciones validas:', round(suma_montos)) #Este da mal
     print(' (r5) - Cantidad de ordenes para moneda ARS:', cant_ARS)
     print(' (r6) - Cantidad de ordenes para moneda USD:', cant_USD)
     print(' (r7) - Cantidad de ordenes para moneda EUR:', cant_EUR)
@@ -274,10 +293,10 @@ def principal():
     print(' (r9) - Cantidad de ordenes para moneda JPN:', cant_JPY)
     print('(r10) - Codigo de la orden de pago con mayor diferencia nominal - final:', codigo_orden_max)
     print('(r11) - Monto nominal de esa misma orden:', monto_nominal_max)
-    print('(r12) - Monto final de esa misma orden:', monto_final_max) #Este da mal
+    print('(r12) - Monto final de esa misma orden:', round(monto_final_max)) #Este da mal
     print('(r13) - Nombre del primer beneficiario del archivo', nombre_primera_operacion)
     print('(r14) - Cantidad de veces que apareció ese mismo nombre:', cantidad_apariciones_beneficiario)
     print('(r15) - Porcentaje de operaciones inválidas sobre el total:', porcentaje_invalidas)
-    print('(r16) - Monto final promedio de las ordenes validas en moneda ARS:', monto_promedio) #El resultado da bien pero esta demas el .0
+    print('(r16) - Monto final promedio de las ordenes validas en moneda ARS:', int(monto_promedio)) #El resultado da bien pero esta demas el .0
 
 principal()
